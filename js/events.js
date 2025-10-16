@@ -38,6 +38,13 @@ const COLOR_MAP = {
   w: "var(--base3)",
 };
 
+function handleAltClick(e) {
+  if (e.altKey) {
+    e.preventDefault();
+    setControlsHidden(!getControlsHidden());
+  }
+}
+
 function handleFocusOut(e) {
   if (e.target.hasAttribute("contenteditable")) {
     setJustBlurred(true);
@@ -170,6 +177,7 @@ export function initEventListeners() {
 
   document.addEventListener("focusout", handleFocusOut);
   document.addEventListener("keydown", handleKeyDown);
+  document.addEventListener("click", handleAltClick);
   fileInput.addEventListener("change", handleFileInputChange);
 
   // Global hold listener for toggling controls
