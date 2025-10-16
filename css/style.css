@@ -24,8 +24,8 @@ body {
   margin: 0;
   padding: 1rem;
   box-sizing: border-box;
-  height: calc(100vh - 6em);
-  width: 98vw;
+  height: 96vh;
+  width: 96vw;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -36,10 +36,20 @@ body {
 }
 
 .controls {
+  position: absolute;
+  top: 1.8em;
+  left: 1.8em;
   padding-bottom: 1rem;
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 100000;
+}
+
+.controls.hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .btn {

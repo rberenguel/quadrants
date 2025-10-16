@@ -4,11 +4,21 @@ let state = {
   rows: [],
   columns: [],
   items: [],
+  controlsHidden: true,
 };
 
 let selectedItemId = null;
 let justBlurred = false;
 let itemInColorChangeMode = null;
+
+export function getControlsHidden() {
+  return state.controlsHidden;
+}
+
+export function setControlsHidden(value) {
+  state.controlsHidden = value;
+  renderApp();
+}
 
 export function getItemInColorChangeMode() {
   return itemInColorChangeMode;

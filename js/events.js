@@ -10,6 +10,8 @@ import {
   setState,
   setItemInColorChangeMode,
   getItemInColorChangeMode,
+  getControlsHidden,
+  setControlsHidden,
 } from "./state.js";
 import { renderApp } from "./app.js";
 import {
@@ -169,4 +171,13 @@ export function initEventListeners() {
   document.addEventListener("focusout", handleFocusOut);
   document.addEventListener("keydown", handleKeyDown);
   fileInput.addEventListener("change", handleFileInputChange);
+
+  // Global hold listener for toggling controls
+  interact(document.body).on("hold", (e) => {
+    const mainContainer = document.getElementById("main-container");
+    if (mainContainer && !mainContainer.contains(e.target)) {
+      e.preventDefault();
+      setControlsHidden(!getControlsHidden());
+    }
+  });
 }

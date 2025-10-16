@@ -2,6 +2,14 @@ import { getState, setState } from "./state.js";
 import { renderApp } from "./app.js";
 import { get, set, del } from "../lib/idb-keyval.js";
 
+function isIframe() {
+  try {
+    return window.self !== window.top;
+  } catch (e) {
+    return true; // Assume it's an iframe if access to window.top is denied
+  }
+}
+
 export function toMarkdown() {
   const state = getState();
   let md = "";
@@ -66,7 +74,7 @@ export async function saveFile() {
   const blob = new Blob([md], { type: "text/markdown" });
   const file = new File([blob], "quadrants.md", { type: "text/markdown" });
 
-  if ("showSaveFilePicker" in window) {
+  if ("showSaveFilePicker" in window && !isIframe()) {
     try {
       const handle = await window.showSaveFilePicker({
         suggestedName: "quadrants.md",
@@ -114,7 +122,7 @@ export async function saveFile() {
 
 export function loadFile() {
   const fileInput = document.getElementById("file-input");
-  if (window.showOpenFilePicker) {
+  if (window.showOpenFilePicker && !isIframe()) {
     window
       .showOpenFilePicker()
       .then(async ([fileHandle]) => {
@@ -131,7 +139,7 @@ export function loadFile() {
 }
 
 export async function checkLastFilePermission() {
-  if (!window.showOpenFilePicker) {
+  if (!window.showOpenFilePicker || isIframe()) {
     console.log(
       "File System Access API not supported, cannot check last file permission.",
     );
@@ -168,7 +176,7 @@ export async function checkLastFilePermission() {
 }
 
 export async function requestAndLoadLastFile() {
-  if (!window.showOpenFilePicker) {
+  if (!window.showOpenFilePicker || isIframe()) {
     console.log(
       "File System Access API not supported, cannot request and load last file.",
     );

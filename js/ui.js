@@ -4,6 +4,7 @@ import {
   addColumn,
   updateItem,
   setSelectedItemId,
+  getControlsHidden,
 } from "./state.js";
 import { initInteract } from "./drag.js";
 import { selectItem as selectItemHandler } from "./events.js";
@@ -13,6 +14,15 @@ const mainContainer = document.getElementById("main-container");
 export function render() {
   const state = getState();
   mainContainer.innerHTML = ""; // Clear previous render
+
+  const controls = document.querySelector(".controls");
+  if (controls) {
+    if (getControlsHidden()) {
+      controls.classList.add("hidden");
+    } else {
+      controls.classList.remove("hidden");
+    }
+  }
 
   const hasGrid = state.rows.length > 0 || state.columns.length > 0;
   const fragment = document.createDocumentFragment();

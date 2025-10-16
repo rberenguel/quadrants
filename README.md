@@ -8,6 +8,7 @@ You can add as many rows and columns as you want, and place stuff anywhere.
 
 - Saves as Markdown, easy to edit in a pinch.
 - Obviously can load what it saved.
+- Where are the buttons, you ask? Long press outside of the diagram (in the borders) to make them appear or disappear. Why like this? Because I wanted to.
 - Long press to add items to the diagram.
 - Press the upper right "arrow" to add columns, lower right "arrow" to add rows.
 - Click on the headers to rename them.
