@@ -1,79 +1,89 @@
-import { renderApp } from './app.js';
+import { renderApp } from "./app.js";
 
 let state = {
-    rows: [],
-    columns: [],
-    items: []
+  rows: [],
+  columns: [],
+  items: [],
 };
 
 let selectedItemId = null;
 let justBlurred = false;
+let itemInColorChangeMode = null;
+
+export function getItemInColorChangeMode() {
+  return itemInColorChangeMode;
+}
+
+export function setItemInColorChangeMode(id) {
+  itemInColorChangeMode = id;
+}
 
 export function getState() {
-    return state;
+  return state;
 }
 
 export function setState(newState) {
-    state = newState;
-    renderApp();
+  state = newState;
+  renderApp();
 }
 
 export function getSelectedItemId() {
-    return selectedItemId;
+  return selectedItemId;
 }
 
 export function setSelectedItemId(id) {
-    selectedItemId = id;
+  selectedItemId = id;
 }
 
 export function getJustBlurred() {
-    return justBlurred;
+  return justBlurred;
 }
 
 export function setJustBlurred(value) {
-    justBlurred = value;
+  justBlurred = value;
 }
 
 export function updateItem(id, updates) {
-    const item = state.items.find(i => i.id === id);
-    if (item) {
-        Object.assign(item, updates);
-    }
-    // A full re-render is often needed for items, e.g., if text changes size
-    renderApp();
+  const item = state.items.find((i) => i.id === id);
+  if (item) {
+    Object.assign(item, updates);
+  }
+  // A full re-render is often needed for items, e.g., if text changes size
+  renderApp();
 }
 
 export function deleteItem(id) {
-    state.items = state.items.filter(i => i.id !== id);
-    setSelectedItemId(null);
-    renderApp();
+  state.items = state.items.filter((i) => i.id !== id);
+  setSelectedItemId(null);
+  renderApp();
 }
 
 export function addRow() {
-    if (state.rows.length === 0 && state.columns.length === 0) {
-         state.columns.push(':layout-right: Col 1');
-    }
-    state.rows.push(`:layout-left: Row ${state.rows.length + 1}`);
-    renderApp();
+  if (state.rows.length === 0 && state.columns.length === 0) {
+    state.columns.push(":layout-right: Col 1");
+  }
+  state.rows.push(`:layout-left: Row ${state.rows.length + 1}`);
+  renderApp();
 }
 
 export function addColumn() {
-    if (state.rows.length === 0 && state.columns.length === 0) {
-         state.rows.push(':layout-left: Row 1');
-    }
-    state.columns.push(`:layout-right: Col ${state.columns.length + 1}`);
-    renderApp();
+  if (state.rows.length === 0 && state.columns.length === 0) {
+    state.rows.push(":layout-left: Row 1");
+  }
+  state.columns.push(`:layout-right: Col ${state.columns.length + 1}`);
+  renderApp();
 }
 
 export function createItem(x, y) {
-    const newItem = {
-        id: `item-${Date.now()}`,
-        text: 'item',
-        x: x.toFixed(2),
-        y: y.toFixed(2),
-        url: null,
-        marked: false
-    };
-    state.items.push(newItem);
-    renderApp();
+  const newItem = {
+    id: `item-${Date.now()}`,
+    text: "item",
+    x: x.toFixed(2),
+    y: y.toFixed(2),
+    url: null,
+    marked: false,
+    color: "var(--cyan)",
+  };
+  state.items.push(newItem);
+  renderApp();
 }
