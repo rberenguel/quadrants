@@ -1,6 +1,7 @@
 import { initEventListeners } from "./events.js";
 import { renderApp } from "./app.js";
 import { checkLastFilePermission } from "./file.js";
+import "./modal.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const urlParams = new URLSearchParams(window.location.search);

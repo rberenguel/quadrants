@@ -24,6 +24,7 @@ export function toMarkdown() {
     if (i.url) md += `- url: ${i.url}\n`;
     if (i.marked) md += `- marked: true\n`;
     if (i.color) md += `- color: ${i.color}\n`;
+    if (i.fontSize && i.fontSize !== 100) md += `- fontSize: ${i.fontSize}\n`;
     md += "\n";
   });
   return md;
@@ -58,6 +59,8 @@ export function fromMarkdown(md) {
           }
         } else if (key === "color") {
           currentItem.color = value;
+        } else if (key === "fontSize") {
+          currentItem.fontSize = parseInt(value, 10);
         } else {
           currentItem[key] = value;
         }
@@ -256,6 +259,9 @@ export async function exportToHtml() {
 
   const mainContainer = document.getElementById("main-container");
   const contentHtml = mainContainer.innerHTML;
+  const themeClass = document.body.classList.contains("light-theme")
+    ? 'class="light-theme"'
+    : "";
 
   const html = `
         <!DOCTYPE html>
@@ -268,7 +274,7 @@ export async function exportToHtml() {
                 ${combinedCss}
             </style>
         </head>
-        <body>
+        <body ${themeClass}>
             <div id="main-container">
                 ${contentHtml}
             </div>

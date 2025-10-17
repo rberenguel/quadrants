@@ -22,6 +22,8 @@ import {
   requestAndLoadLastFile,
 } from "./file.js";
 
+import { showConfirm, showPrompt } from "./modal.js";
+
 // InteractJS is loaded globally via script tag in index.html
 // import interact from 'https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js';
 
@@ -70,10 +72,24 @@ function handleKeyDown(e) {
     return;
   }
 
-  if (e.key === "c" && selectedItemId) {
+  if (
+    e.key === "c" &&
+    selectedItemId &&
+    e.target === document.body &&
+    !e.target.closest(".item .edit-area")
+  ) {
     e.preventDefault();
     setItemInColorChangeMode(selectedItemId);
     return;
+  }
+
+  if (e.key === "q" && e.target === document.body) {
+    e.preventDefault();
+    document.body.classList.toggle("light-theme");
+    localStorage.setItem(
+      "quadrants-theme",
+      document.body.classList.contains("light-theme") ? "light" : "dark",
+    );
   }
 
   if (e.metaKey && e.key === "k") {
@@ -81,10 +97,11 @@ function handleKeyDown(e) {
     if (selectedItemId) {
       const item = state.items.find((i) => i.id === selectedItemId);
       if (item) {
-        const newUrl = prompt("Enter URL:", item.url || "");
-        if (newUrl !== null) {
-          updateItem(item.id, { url: newUrl });
-        }
+        showPrompt("Enter URL:", item.url || "", (newUrl) => {
+          if (newUrl !== null) {
+            updateItem(item.id, { url: newUrl });
+          }
+        });
       }
     }
     return;
@@ -95,6 +112,21 @@ function handleKeyDown(e) {
   }
 
   if (selectedItemId) {
+    const item = state.items.find((i) => i.id === selectedItemId);
+    if (e.key === ".") {
+      e.preventDefault();
+      if (item) {
+        updateItem(item.id, { fontSize: (item.fontSize || 100) + 10 });
+      }
+    }
+    if (e.key === ",") {
+      e.preventDefault();
+      if (item) {
+        updateItem(item.id, {
+          fontSize: Math.max(10, (item.fontSize || 100) - 10),
+        });
+      }
+    }
     if (e.key === "Delete" || e.key === "Backspace") {
       e.preventDefault();
       deleteItem(selectedItemId);
@@ -102,7 +134,6 @@ function handleKeyDown(e) {
 
     if (e.code === "Space") {
       e.preventDefault();
-      const item = state.items.find((i) => i.id === selectedItemId);
       if (item) {
         updateItem(item.id, { marked: !item.marked });
       }
@@ -158,6 +189,11 @@ export function selectItem(id) {
 }
 
 export function initEventListeners() {
+  const savedTheme = localStorage.getItem("quadrants-theme");
+  if (savedTheme === "light") {
+    document.body.classList.add("light-theme");
+  }
+
   const saveBtn = document.getElementById("save-btn");
   const loadBtn = document.getElementById("load-btn");
   const clearBtn = document.getElementById("clear-btn");
@@ -170,9 +206,9 @@ export function initEventListeners() {
   exportBtn.addEventListener("click", exportToHtml);
   reloadLastBtn.addEventListener("click", requestAndLoadLastFile);
   clearBtn.addEventListener("click", () => {
-    if (confirm("Are you sure you want to clear everything?")) {
+    showConfirm("Are you sure you want to clear everything?", () => {
       setState({ rows: [], columns: [], items: [] });
-    }
+    });
   });
 
   document.addEventListener("focusout", handleFocusOut);

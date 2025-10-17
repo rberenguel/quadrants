@@ -93,6 +93,7 @@ export function createItem(x, y) {
     url: null,
     marked: false,
     color: "var(--cyan)",
+    fontSize: 100,
   };
   state.items.push(newItem);
   renderApp();
