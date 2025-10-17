@@ -4,7 +4,7 @@ let state = {
   items: [],
   controlsHidden: true,
   lastMousePosition: { x: 0, y: 0 },
-  lastUsedFontSize: 100,
+  lastUsedFontSize: 1.5,
 };
 
 let selectedItemId = null;

@@ -145,20 +145,20 @@ function handleKeyDown(e) {
     if (e.key === ".") {
       e.preventDefault();
       if (item) {
-        const newFontSize = (item.fontSize || 100) + 10;
+        const newFontSize = (item.fontSize || 1.5) + 0.1;
         updateItem(item.id, { fontSize: newFontSize });
         if (infoHoverTimeout) clearTimeout(infoHoverTimeout);
-        showInfoHover(`Size: ${newFontSize}%`);
+        showInfoHover(`Size: ${newFontSize.toFixed(1)}`);
         infoHoverTimeout = setTimeout(hideInfoHover, 1000);
       }
     }
     if (e.key === ",") {
       e.preventDefault();
       if (item) {
-        const newFontSize = Math.max(10, (item.fontSize || 100) - 10);
+        const newFontSize = Math.max(0.1, (item.fontSize || 1.5) - 0.1);
         updateItem(item.id, { fontSize: newFontSize });
         if (infoHoverTimeout) clearTimeout(infoHoverTimeout);
-        showInfoHover(`Size: ${newFontSize}%`);
+        showInfoHover(`Size: ${newFontSize.toFixed(1)}`);
         infoHoverTimeout = setTimeout(hideInfoHover, 1000);
       }
     }

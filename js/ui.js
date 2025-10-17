@@ -212,7 +212,7 @@ function createItemElement(item) {
   itemEl.style.left = `${item.x}%`;
   itemEl.style.top = `${item.y}%`;
   itemEl.style.color = item.color;
-  itemEl.style.fontSize = `${item.fontSize || 100}%`;
+  itemEl.style.fontSize = `calc(${item.fontSize || 1.5} * (1vw + 1vh))`;
 
   if (item.marked) {
     itemEl.classList.add("marked");

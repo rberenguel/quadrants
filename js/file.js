@@ -60,7 +60,7 @@ export function fromMarkdown(md) {
         } else if (key === "color") {
           currentItem.color = value;
         } else if (key === "fontSize") {
-          currentItem.fontSize = parseInt(value, 10);
+          currentItem.fontSize = parseFloat(value);
         } else {
           currentItem[key] = value;
         }
