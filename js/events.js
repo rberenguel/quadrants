@@ -39,6 +39,7 @@ const COLOR_MAP = {
   o: "var(--orange)",
   s: "var(--base01)",
   w: "var(--base3)",
+  x: "black",
 };
 
 let infoHoverTimeout = null;
@@ -46,7 +47,7 @@ let infoHoverTimeout = null;
 function handleAltClick(e) {
   if (e.altKey) {
     e.preventDefault();
-    setControlsHidden(!getControlsHidden());
+    //setControlsHidden(!getControlsHidden());
   }
 }
 
@@ -258,7 +259,7 @@ export function initEventListeners() {
     const mainContainer = document.getElementById("main-container");
     if (mainContainer && !mainContainer.contains(e.target)) {
       e.preventDefault();
-      setControlsHidden(!getControlsHidden());
+      //setControlsHidden(!getControlsHidden());
     }
   });
 }

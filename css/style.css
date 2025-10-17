@@ -362,3 +362,21 @@ body {
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
+
+.alignment-line {
+  position: absolute;
+  background-color: var(--magenta);
+  opacity: 0.7;
+  z-index: 99999;
+  pointer-events: none;
+}
+
+.alignment-line[style*="height: 1px"] {
+  border-top: 1px dashed var(--magenta);
+  background-color: transparent;
+}
+
+.alignment-line[style*="width: 1px"] {
+  border-left: 1px dashed var(--magenta);
+  background-color: transparent;
+}

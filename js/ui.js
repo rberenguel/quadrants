@@ -20,7 +20,7 @@ export function render() {
     if (getControlsHidden()) {
       controls.classList.add("hidden");
     } else {
-      controls.classList.remove("hidden");
+      //controls.classList.remove("hidden");
     }
   }
 
@@ -231,7 +231,7 @@ function createItemElement(item) {
   }
 
   itemEl.addEventListener("click", (e) => {
-    if (e.target.tagName !== "A") {
+    if (e.target.tagName !== "A" && e.target.tagName !== "INPUT") {
       startEditingItem(itemEl, item);
     }
   });
@@ -259,4 +259,34 @@ function startEditingItem(itemEl, item) {
 
   editArea.focus();
   window.getSelection().selectAllChildren(editArea);
+}
+
+export function showAlignmentLines(lines) {
+  hideAlignmentLines(); // Clear existing lines
+
+  const container = mainContainer.querySelector(".quadrant, .quadrant-grid");
+  if (!container) return;
+
+  const containerRect = container.getBoundingClientRect();
+
+  lines.forEach((line) => {
+    const lineEl = document.createElement("div");
+    lineEl.classList.add("alignment-line");
+    if (line.type === "horizontal") {
+      lineEl.style.top = `${line.y}px`;
+      lineEl.style.left = `0`;
+      lineEl.style.right = `0`;
+      lineEl.style.height = `1px`;
+    } else if (line.type === "vertical") {
+      lineEl.style.left = `${line.x}px`;
+      lineEl.style.top = `0`;
+      lineEl.style.bottom = `0`;
+      lineEl.style.width = `1px`;
+    }
+    container.appendChild(lineEl);
+  });
+}
+
+export function hideAlignmentLines() {
+  document.querySelectorAll(".alignment-line").forEach((el) => el.remove());
 }
