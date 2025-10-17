@@ -111,22 +111,44 @@ export function render() {
   initInteract();
 }
 
-function createIconifiedContent(rawText) {
+function createIconifiedContent(rawText, itemId) {
   const fragment = document.createDocumentFragment();
-  const match = rawText.match(/^:([a-zA-Z0-9_-]+):(.*)/);
-  let textToProcess;
+  let textToProcess = rawText;
 
-  if (match) {
-    const iconName = match[1];
-    textToProcess = match[2].trim();
+  // Check for checkbox pattern
+  const checkboxMatch = textToProcess.match(/^\s*\[([ x])\]\s*(.*)/);
+  if (checkboxMatch) {
+    const isChecked = checkboxMatch[1] === "x";
+    textToProcess = checkboxMatch[2].trim();
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = isChecked;
+    checkbox.className = "item-checkbox";
+    checkbox.addEventListener("change", (e) => {
+      const state = getState();
+      const item = state.items.find((i) => i.id === itemId);
+      if (item) {
+        const newCheckedState = e.target.checked ? "x" : " ";
+        const newText = `[${newCheckedState}] ${textToProcess}`;
+        updateItem(itemId, { text: newText });
+      }
+    });
+    fragment.appendChild(checkbox);
+    fragment.appendChild(document.createTextNode(" ")); // Space after checkbox
+  }
+
+  // Check for icon pattern (only if no checkbox was found or if textToProcess still has content)
+  const iconMatch = textToProcess.match(/^:([a-zA-Z0-9_-]+):(.*)/);
+  if (iconMatch) {
+    const iconName = iconMatch[1];
+    textToProcess = iconMatch[2].trim();
     const iconSpan = document.createElement("span");
     iconSpan.className = `icon iconoir iconoir-${iconName}`;
     fragment.appendChild(iconSpan);
     if (textToProcess) {
       fragment.appendChild(document.createTextNode(" "));
     }
-  } else {
-    textToProcess = rawText;
   }
 
   const lines = textToProcess.split("\n");
@@ -148,7 +170,7 @@ function createHeaderCell(type, title, index) {
   input.setAttribute("contenteditable", "true");
 
   input.innerHTML = "";
-  input.appendChild(createIconifiedContent(title));
+  input.appendChild(createIconifiedContent(title, null));
 
   input.addEventListener("focus", (e) => {
     const state = getState();
@@ -165,7 +187,7 @@ function createHeaderCell(type, title, index) {
       state.rows[index] = newTitle;
     }
     e.target.innerHTML = "";
-    e.target.appendChild(createIconifiedContent(newTitle));
+    e.target.appendChild(createIconifiedContent(newTitle, null));
   });
 
   cell.appendChild(input);
@@ -196,7 +218,7 @@ function createItemElement(item) {
     itemEl.classList.add("marked");
   }
 
-  const content = createIconifiedContent(item.text);
+  const content = createIconifiedContent(item.text, item.id);
 
   if (item.url) {
     const link = document.createElement("a");
@@ -227,7 +249,7 @@ function startEditingItem(itemEl, item) {
   editArea.textContent = item.text;
 
   const handleBlur = (e) => {
-    updateItem(item.id, { text: e.target.textContent });
+    updateItem(item.id, { text: e.target.innerText });
   };
 
   editArea.addEventListener("blur", handleBlur, { once: true });

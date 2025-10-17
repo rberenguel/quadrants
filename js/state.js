@@ -1,15 +1,20 @@
-import { renderApp } from "./app.js";
-
 let state = {
   rows: [],
   columns: [],
   items: [],
   controlsHidden: true,
+  lastMousePosition: { x: 0, y: 0 },
+  lastUsedFontSize: 100,
 };
 
 let selectedItemId = null;
 let justBlurred = false;
 let itemInColorChangeMode = null;
+let _renderApp = null; // To hold the renderApp function
+
+export function setRenderAppCallback(callback) {
+  _renderApp = callback;
+}
 
 export function getControlsHidden() {
   return state.controlsHidden;
@@ -17,7 +22,7 @@ export function getControlsHidden() {
 
 export function setControlsHidden(value) {
   state.controlsHidden = value;
-  renderApp();
+  if (_renderApp) _renderApp();
 }
 
 export function getItemInColorChangeMode() {
@@ -34,7 +39,7 @@ export function getState() {
 
 export function setState(newState) {
   state = newState;
-  renderApp();
+  if (_renderApp) _renderApp();
 }
 
 export function getSelectedItemId() {
@@ -53,19 +58,26 @@ export function setJustBlurred(value) {
   justBlurred = value;
 }
 
+export function setLastMousePosition(x, y) {
+  state.lastMousePosition = { x, y };
+}
+
 export function updateItem(id, updates) {
   const item = state.items.find((i) => i.id === id);
   if (item) {
     Object.assign(item, updates);
+    if (updates.fontSize) {
+      state.lastUsedFontSize = updates.fontSize;
+    }
   }
   // A full re-render is often needed for items, e.g., if text changes size
-  renderApp();
+  if (_renderApp) _renderApp();
 }
 
 export function deleteItem(id) {
   state.items = state.items.filter((i) => i.id !== id);
   setSelectedItemId(null);
-  renderApp();
+  if (_renderApp) _renderApp();
 }
 
 export function addRow() {
@@ -73,15 +85,15 @@ export function addRow() {
     state.columns.push(":layout-right: Col 1");
   }
   state.rows.push(`:layout-left: Row ${state.rows.length + 1}`);
-  renderApp();
+  if (_renderApp) _renderApp();
 }
 
 export function addColumn() {
   if (state.rows.length === 0 && state.columns.length === 0) {
-    state.rows.push(":layout-left: Row 1");
+    state.columns.push(":layout-right: Col 1");
   }
   state.columns.push(`:layout-right: Col ${state.columns.length + 1}`);
-  renderApp();
+  if (_renderApp) _renderApp();
 }
 
 export function createItem(x, y) {
@@ -93,8 +105,8 @@ export function createItem(x, y) {
     url: null,
     marked: false,
     color: "var(--cyan)",
-    fontSize: 100,
+    fontSize: state.lastUsedFontSize,
   };
   state.items.push(newItem);
-  renderApp();
+  if (_renderApp) _renderApp();
 }

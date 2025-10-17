@@ -21,6 +21,7 @@ import {
   exportToHtml,
   requestAndLoadLastFile,
 } from "./file.js";
+import { showInfoHover, hideInfoHover } from "./infohover.js";
 
 import { showConfirm, showPrompt } from "./modal.js";
 
@@ -39,6 +40,8 @@ const COLOR_MAP = {
   s: "var(--base01)",
   w: "var(--base3)",
 };
+
+let infoHoverTimeout = null;
 
 function handleAltClick(e) {
   if (e.altKey) {
@@ -92,6 +95,31 @@ function handleKeyDown(e) {
     );
   }
 
+  // Cmd key shortcuts for Mac
+  if (e.metaKey) {
+    switch (e.key) {
+      case "s":
+        e.preventDefault();
+        saveFile();
+        break;
+      case "o":
+        e.preventDefault();
+        loadFile();
+        break;
+      case "e":
+        e.preventDefault();
+        exportToHtml();
+        break;
+      case "n":
+        e.preventDefault();
+        showConfirm("Are you sure you want to clear everything?", () => {
+          setState({ rows: [], columns: [], items: [] });
+        });
+        break;
+    }
+    return;
+  }
+
   if (e.metaKey && e.key === "k") {
     e.preventDefault();
     if (selectedItemId) {
@@ -116,20 +144,27 @@ function handleKeyDown(e) {
     if (e.key === ".") {
       e.preventDefault();
       if (item) {
-        updateItem(item.id, { fontSize: (item.fontSize || 100) + 10 });
+        const newFontSize = (item.fontSize || 100) + 10;
+        updateItem(item.id, { fontSize: newFontSize });
+        if (infoHoverTimeout) clearTimeout(infoHoverTimeout);
+        showInfoHover(`Size: ${newFontSize}%`);
+        infoHoverTimeout = setTimeout(hideInfoHover, 1000);
       }
     }
     if (e.key === ",") {
       e.preventDefault();
       if (item) {
-        updateItem(item.id, {
-          fontSize: Math.max(10, (item.fontSize || 100) - 10),
-        });
+        const newFontSize = Math.max(10, (item.fontSize || 100) - 10);
+        updateItem(item.id, { fontSize: newFontSize });
+        if (infoHoverTimeout) clearTimeout(infoHoverTimeout);
+        showInfoHover(`Size: ${newFontSize}%`);
+        infoHoverTimeout = setTimeout(hideInfoHover, 1000);
       }
     }
     if (e.key === "Delete" || e.key === "Backspace") {
       e.preventDefault();
       deleteItem(selectedItemId);
+      hideInfoHover(); // Hide hover if item is deleted
     }
 
     if (e.code === "Space") {
@@ -175,6 +210,8 @@ export function attachDynamicEventListeners() {
       createItem(x, y);
     });
   }
+
+  // Removed mouseover/mouseout listeners for info hover
 }
 
 export function selectItem(id) {
